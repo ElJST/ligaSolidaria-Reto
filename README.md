@@ -20,11 +20,11 @@ Liga Solidaria es una plataforma desarrollada con Laravel y PHP que permite la g
 1. **Clonar el Repositorio**
    git clone https://github.com/ElJST/ligaSolidaria.git
    cd ligaSolidaria
-   ```
+   
 
 2. **Construir y Levantar los Contenedores**
    docker-compose up -d --build
-   ```
+   
 3. **Acceder a la Aplicación**
    - **Web:** `https://ligasolidaria.com`
    - **Base de Datos:** `localhost:3306` (Usuario y contraseña en `.env`)
