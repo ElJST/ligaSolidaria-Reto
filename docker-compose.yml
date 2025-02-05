@@ -1,0 +1,70 @@
+services:
+  # Servidor web
+  web:
+    image: php:8.2-apache
+    container_name: apache_server
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./laravel:/var/www/html
+      - ./apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./ssl:/etc/apache2/ssl
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html/public
+    depends_on:
+      - db
+    command: >
+      bash -c "apt-get update &&
+               apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip unzip mariadb-client &&
+               docker-php-ext-configure gd --with-freetype --with-jpeg &&
+               docker-php-ext-install gd pdo pdo_mysql &&
+               a2enmod rewrite ssl &&
+               a2ensite 000-default &&
+               while ! mysqladmin ping -h db --silent; do echo 'Esperando a MySQL...'; sleep 2; done &&
+               php artisan migrate --force &&
+               apache2-foreground"
+
+  # Base de datos MySQL
+  db:
+    image: mysql:latest
+    container_name: mysql_server
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: contraseña
+      MYSQL_DATABASE: ligasolidaria
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: contraseña
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+
+  # Composer para Laravel
+  composer:
+    image: composer:latest
+    container_name: composer
+    working_dir: /app
+    volumes:
+      - ./laravel:/app
+    entrypoint: ["composer"]
+    command: ["install"]
+
+  # Servidor FTP (pure-ftpd)
+  pureftpd_server:
+    image: stilliard/pure-ftpd
+    container_name: pure-ftpd
+    ports:
+      - "21:21"             # Puerto FTP
+      - "30000-30009:30000-30009"  # Puertos pasivos para FTP
+    volumes:
+      - "./ftp-data:/home/username"               # Directorio del usuario FTP
+      - "./ftp-passwd:/etc/pure-ftpd/passwd"      # Archivo de contraseñas FTP
+    environment:
+      PUBLICHOST: "ligasolidaria.com"               # Nombre de host público
+      FTP_USER_NAME: "usuario"                 # Nombre de usuario FTP
+      FTP_USER_PASS: "contraseña"                 # Contraseña del usuario FTP
+      FTP_USER_HOME: "/home/username"       # Directorio home del usuario FTP
+      FTP_PASSIVE_PORTS: "30000:30009"        # Puertos pasivos para FTP
+    restart: always
