@@ -13,11 +13,9 @@ trait DatabaseTransactions
     {
         $database = $this->app->make('db');
 
-        $connections = $this->connectionsToTransact();
+        $this->app->instance('db.transactions', $transactionsManager = new DatabaseTransactionsManager);
 
-        $this->app->instance('db.transactions', $transactionsManager = new DatabaseTransactionsManager($connections));
-
-        foreach ($connections as $name) {
+        foreach ($this->connectionsToTransact() as $name) {
             $connection = $database->connection($name);
             $connection->setTransactionManager($transactionsManager);
             $dispatcher = $connection->getEventDispatcher();

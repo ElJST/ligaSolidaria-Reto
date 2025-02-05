@@ -2,9 +2,8 @@
 
 namespace Illuminate\Foundation\Testing;
 
-use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Foundation\Application;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use Throwable;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -23,16 +22,11 @@ abstract class TestCase extends BaseTestCase
     /**
      * Creates the application.
      *
-     * @return \Illuminate\Foundation\Application
+     * Needs to be implemented by subclasses.
+     *
+     * @return \Symfony\Component\HttpKernel\HttpKernelInterface
      */
-    public function createApplication()
-    {
-        $app = require Application::inferBasePath().'/bootstrap/app.php';
-
-        $app->make(Kernel::class)->bootstrap();
-
-        return $app;
-    }
+    abstract public function createApplication();
 
     /**
      * Setup the test environment.
@@ -41,6 +35,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function setUp(): void
     {
+        static::$latestResponse = null;
+
         $this->setUpTheTestEnvironment();
     }
 
@@ -52,6 +48,26 @@ abstract class TestCase extends BaseTestCase
     protected function refreshApplication()
     {
         $this->app = $this->createApplication();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function runTest(): mixed
+    {
+        $result = null;
+
+        try {
+            $result = parent::runTest();
+        } catch (Throwable $e) {
+            if (! is_null(static::$latestResponse)) {
+                static::$latestResponse->transformNotSuccessfulException($e);
+            }
+
+            throw $e;
+        }
+
+        return $result;
     }
 
     /**
@@ -73,6 +89,8 @@ abstract class TestCase extends BaseTestCase
      */
     public static function tearDownAfterClass(): void
     {
+        static::$latestResponse = null;
+
         static::tearDownAfterClassUsingTestCase();
     }
 }

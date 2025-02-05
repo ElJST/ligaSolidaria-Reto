@@ -2,17 +2,11 @@
 
 namespace Illuminate\Testing;
 
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Testing\Assert as PHPUnit;
 use Illuminate\Testing\Constraints\SeeInOrder;
-use Stringable;
 
-class TestComponent implements Stringable
+class TestComponent
 {
-    use Macroable {
-        __call as macroCall;
-    }
-
     /**
      * The original component.
      *
@@ -167,10 +161,6 @@ class TestComponent implements Stringable
      */
     public function __call($method, $parameters)
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
         return $this->component->{$method}(...$parameters);
     }
 }

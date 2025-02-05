@@ -2,12 +2,10 @@
 
 namespace Illuminate\Validation\Rules;
 
+use BackedEnum;
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-
-use function Illuminate\Support\enum_value;
 
 trait DatabaseRule
 {
@@ -101,7 +99,9 @@ trait DatabaseRule
             return $this->whereNull($column);
         }
 
-        $value = enum_value($value);
+        if ($value instanceof BackedEnum) {
+            $value = $value->value;
+        }
 
         $this->wheres[] = compact('column', 'value');
 
@@ -121,7 +121,9 @@ trait DatabaseRule
             return $this->whereNotIn($column, $value);
         }
 
-        $value = enum_value($value);
+        if ($value instanceof BackedEnum) {
+            $value = $value->value;
+        }
 
         return $this->where($column, '!'.$value);
     }
@@ -232,7 +234,7 @@ trait DatabaseRule
      */
     protected function formatWheres()
     {
-        return (new Collection($this->wheres))->map(function ($where) {
+        return collect($this->wheres)->map(function ($where) {
             return $where['column'].','.'"'.str_replace('"', '""', $where['value']).'"';
         })->implode(',');
     }

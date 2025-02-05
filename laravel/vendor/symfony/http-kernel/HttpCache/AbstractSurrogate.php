@@ -23,13 +23,23 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 abstract class AbstractSurrogate implements SurrogateInterface
 {
+    protected $contentTypes;
+
+    /**
+     * @deprecated since Symfony 6.3
+     */
+    protected $phpEscapeMap = [
+        ['<?', '<%', '<s', '<S'],
+        ['<?php echo "<?"; ?>', '<?php echo "<%"; ?>', '<?php echo "<s"; ?>', '<?php echo "<S"; ?>'],
+    ];
+
     /**
      * @param array $contentTypes An array of content-type that should be parsed for Surrogate information
      *                            (default: text/html, text/xml, application/xhtml+xml, and application/xml)
      */
-    public function __construct(
-        protected array $contentTypes = ['text/html', 'text/xml', 'application/xhtml+xml', 'application/xml'],
-    ) {
+    public function __construct(array $contentTypes = ['text/html', 'text/xml', 'application/xhtml+xml', 'application/xml'])
+    {
+        $this->contentTypes = $contentTypes;
     }
 
     /**
@@ -46,13 +56,16 @@ abstract class AbstractSurrogate implements SurrogateInterface
             return false;
         }
 
-        return str_contains($value, \sprintf('%s/1.0', strtoupper($this->getName())));
+        return str_contains($value, sprintf('%s/1.0', strtoupper($this->getName())));
     }
 
-    public function addSurrogateCapability(Request $request): void
+    /**
+     * @return void
+     */
+    public function addSurrogateCapability(Request $request)
     {
         $current = $request->headers->get('Surrogate-Capability');
-        $new = \sprintf('symfony="%s/1.0"', strtoupper($this->getName()));
+        $new = sprintf('symfony="%s/1.0"', strtoupper($this->getName()));
 
         $request->headers->set('Surrogate-Capability', $current ? $current.', '.$new : $new);
     }
@@ -63,7 +76,7 @@ abstract class AbstractSurrogate implements SurrogateInterface
             return false;
         }
 
-        $pattern = \sprintf('#content="[^"]*%s/1.0[^"]*"#', strtoupper($this->getName()));
+        $pattern = sprintf('#content="[^"]*%s/1.0[^"]*"#', strtoupper($this->getName()));
 
         return (bool) preg_match($pattern, $control);
     }
@@ -76,7 +89,7 @@ abstract class AbstractSurrogate implements SurrogateInterface
             $response = $cache->handle($subRequest, HttpKernelInterface::SUB_REQUEST, true);
 
             if (!$response->isSuccessful() && Response::HTTP_NOT_MODIFIED !== $response->getStatusCode()) {
-                throw new \RuntimeException(\sprintf('Error when rendering "%s" (Status code is %d).', $subRequest->getUri(), $response->getStatusCode()));
+                throw new \RuntimeException(sprintf('Error when rendering "%s" (Status code is %d).', $subRequest->getUri(), $response->getStatusCode()));
             }
 
             return $response->getContent();
@@ -95,8 +108,10 @@ abstract class AbstractSurrogate implements SurrogateInterface
 
     /**
      * Remove the Surrogate from the Surrogate-Control header.
+     *
+     * @return void
      */
-    protected function removeFromControl(Response $response): void
+    protected function removeFromControl(Response $response)
     {
         if (!$response->headers->has('Surrogate-Control')) {
             return;
@@ -105,12 +120,12 @@ abstract class AbstractSurrogate implements SurrogateInterface
         $value = $response->headers->get('Surrogate-Control');
         $upperName = strtoupper($this->getName());
 
-        if (\sprintf('content="%s/1.0"', $upperName) == $value) {
+        if (sprintf('content="%s/1.0"', $upperName) == $value) {
             $response->headers->remove('Surrogate-Control');
-        } elseif (preg_match(\sprintf('#,\s*content="%s/1.0"#', $upperName), $value)) {
-            $response->headers->set('Surrogate-Control', preg_replace(\sprintf('#,\s*content="%s/1.0"#', $upperName), '', $value));
-        } elseif (preg_match(\sprintf('#content="%s/1.0",\s*#', $upperName), $value)) {
-            $response->headers->set('Surrogate-Control', preg_replace(\sprintf('#content="%s/1.0",\s*#', $upperName), '', $value));
+        } elseif (preg_match(sprintf('#,\s*content="%s/1.0"#', $upperName), $value)) {
+            $response->headers->set('Surrogate-Control', preg_replace(sprintf('#,\s*content="%s/1.0"#', $upperName), '', $value));
+        } elseif (preg_match(sprintf('#content="%s/1.0",\s*#', $upperName), $value)) {
+            $response->headers->set('Surrogate-Control', preg_replace(sprintf('#content="%s/1.0",\s*#', $upperName), '', $value));
         }
     }
 

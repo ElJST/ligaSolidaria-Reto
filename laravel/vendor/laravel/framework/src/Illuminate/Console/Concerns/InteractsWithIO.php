@@ -263,8 +263,8 @@ trait InteractsWithIO
         $bar->start();
 
         if (is_iterable($totalSteps)) {
-            foreach ($totalSteps as $key => $value) {
-                $callback($value, $bar, $key);
+            foreach ($totalSteps as $value) {
+                $callback($value, $bar);
 
                 $bar->advance();
             }

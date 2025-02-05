@@ -15,12 +15,11 @@ use Symfony\Component\Uid\UuidV4;
 
 class RandomBasedUuidFactory
 {
-    /**
-     * @param class-string $class
-     */
-    public function __construct(
-        private string $class,
-    ) {
+    private string $class;
+
+    public function __construct(string $class)
+    {
+        $this->class = $class;
     }
 
     public function create(): UuidV4

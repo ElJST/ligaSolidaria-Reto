@@ -27,10 +27,10 @@ use PHPUnit\TextUI\Configuration\SourceFilter;
  *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
-final readonly class Generator
+final class Generator
 {
     private Baseline $baseline;
-    private Source $source;
+    private readonly Source $source;
 
     /**
      * @throws EventFacadeIsSealedException
@@ -66,7 +66,7 @@ final readonly class Generator
             return;
         }
 
-        if ($this->restrict($event) && !SourceFilter::instance()->includes($event->file())) {
+        if ($this->restrict($event) && !(new SourceFilter)->includes($this->source, $event->file())) {
             return;
         }
 

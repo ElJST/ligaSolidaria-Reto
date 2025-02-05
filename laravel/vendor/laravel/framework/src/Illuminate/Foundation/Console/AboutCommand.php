@@ -4,10 +4,8 @@ namespace Illuminate\Foundation\Console;
 
 use Closure;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'about')]
@@ -71,8 +69,8 @@ class AboutCommand extends Command
     {
         $this->gatherApplicationInformation();
 
-        (new Collection(static::$data))
-            ->map(fn ($items) => (new Collection($items))
+        collect(static::$data)
+            ->map(fn ($items) => collect($items)
                 ->map(function ($value) {
                     if (is_array($value)) {
                         return [$value];
@@ -82,7 +80,7 @@ class AboutCommand extends Command
                         $value = $this->laravel->make($value);
                     }
 
-                    return (new Collection($this->laravel->call($value)))
+                    return collect($this->laravel->call($value))
                         ->map(fn ($value, $key) => [$key, $value])
                         ->values()
                         ->all();
@@ -145,7 +143,7 @@ class AboutCommand extends Command
     {
         $output = $data->flatMap(function ($data, $section) {
             return [
-                (new Stringable($section))->snake()->value() => $data->mapWithKeys(fn ($item, $key) => [
+                (string) Str::of($section)->snake() => $data->mapWithKeys(fn ($item, $key) => [
                     $this->toSearchKeyword($item[0]) => value($item[1], true),
                 ]),
             ];
@@ -175,8 +173,6 @@ class AboutCommand extends Command
             'Debug Mode' => static::format(config('app.debug'), console: $formatEnabledStatus),
             'URL' => Str::of(config('app.url'))->replace(['http://', 'https://'], ''),
             'Maintenance Mode' => static::format($this->laravel->isDownForMaintenance(), console: $formatEnabledStatus),
-            'Timezone' => config('app.timezone'),
-            'Locale' => config('app.locale'),
         ]);
 
         static::addToSection('Cache', fn () => [
@@ -194,7 +190,7 @@ class AboutCommand extends Command
                 $logChannel = config('logging.default');
 
                 if (config('logging.channels.'.$logChannel.'.driver') === 'stack') {
-                    $secondary = new Collection(config('logging.channels.'.$logChannel.'.channels'));
+                    $secondary = collect(config('logging.channels.'.$logChannel.'.channels'));
 
                     return value(static::format(
                         value: $logChannel,
@@ -214,7 +210,7 @@ class AboutCommand extends Command
             'Session' => config('session.driver'),
         ]));
 
-        (new Collection(static::$customDataResolvers))->each->__invoke();
+        collect(static::$customDataResolvers)->each->__invoke();
     }
 
     /**
@@ -269,7 +265,7 @@ class AboutCommand extends Command
      */
     protected function sections()
     {
-        return (new Collection(explode(',', $this->option('only') ?? '')))
+        return collect(explode(',', $this->option('only') ?? ''))
             ->filter()
             ->map(fn ($only) => $this->toSearchKeyword($only))
             ->all();
@@ -304,7 +300,7 @@ class AboutCommand extends Command
      */
     protected function toSearchKeyword(string $value)
     {
-        return (new Stringable($value))->lower()->snake()->value();
+        return (string) Str::of($value)->lower()->snake();
     }
 
     /**

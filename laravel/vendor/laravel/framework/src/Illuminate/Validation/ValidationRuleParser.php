@@ -7,9 +7,7 @@ use Illuminate\Contracts\Validation\InvokableRule;
 use Illuminate\Contracts\Validation\Rule as RuleContract;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Date;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
 
@@ -96,17 +94,11 @@ class ValidationRuleParser
             return Arr::wrap($this->prepareRule($rule, $attribute));
         }
 
-        $rules = [];
-
-        foreach ($rule as $value) {
-            if ($value instanceof Date) {
-                $rules = array_merge($rules, explode('|', (string) $value));
-            } else {
-                $rules[] = $this->prepareRule($value, $attribute);
-            }
-        }
-
-        return $rules;
+        return array_map(
+            [$this, 'prepareRule'],
+            $rule,
+            array_fill((int) array_key_first($rule), count($rule), $attribute)
+        );
     }
 
     /**
@@ -135,7 +127,7 @@ class ValidationRuleParser
 
         if ($rule instanceof NestedRules) {
             return $rule->compile(
-                $attribute, $this->data[$attribute] ?? null, Arr::dot($this->data), $this->data
+                $attribute, $this->data[$attribute] ?? null, Arr::dot($this->data)
             )->rules[$attribute];
         }
 
@@ -160,9 +152,7 @@ class ValidationRuleParser
             if (Str::startsWith($key, $attribute) || (bool) preg_match('/^'.$pattern.'\z/', $key)) {
                 foreach ((array) $rules as $rule) {
                     if ($rule instanceof NestedRules) {
-                        $context = Arr::get($this->data, Str::beforeLast($key, '.'));
-
-                        $compiled = $rule->compile($key, $value, $data, $context);
+                        $compiled = $rule->compile($key, $value, $data);
 
                         $this->implicitAttributes = array_merge_recursive(
                             $compiled->implicitAttributes,
@@ -328,7 +318,7 @@ class ValidationRuleParser
      */
     public static function filterConditionalRules($rules, array $data = [])
     {
-        return (new Collection($rules))->mapWithKeys(function ($attributeRules, $attribute) use ($data) {
+        return collect($rules)->mapWithKeys(function ($attributeRules, $attribute) use ($data) {
             if (! is_array($attributeRules) &&
                 ! $attributeRules instanceof ConditionalRules) {
                 return [$attribute => $attributeRules];
@@ -340,7 +330,7 @@ class ValidationRuleParser
                                 : array_filter($attributeRules->defaultRules($data)), ];
             }
 
-            return [$attribute => (new Collection($attributeRules))->map(function ($rule) use ($data) {
+            return [$attribute => collect($attributeRules)->map(function ($rule) use ($data) {
                 if (! $rule instanceof ConditionalRules) {
                     return [$rule];
                 }

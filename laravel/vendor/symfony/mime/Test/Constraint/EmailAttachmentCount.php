@@ -17,14 +17,18 @@ use Symfony\Component\Mime\RawMessage;
 
 final class EmailAttachmentCount extends Constraint
 {
-    public function __construct(
-        private int $expectedValue,
-    ) {
+    private int $expectedValue;
+    private ?string $transport;
+
+    public function __construct(int $expectedValue, ?string $transport = null)
+    {
+        $this->expectedValue = $expectedValue;
+        $this->transport = $transport;
     }
 
     public function toString(): string
     {
-        return \sprintf('has sent "%d" attachment(s)', $this->expectedValue);
+        return sprintf('has sent "%d" attachment(s)', $this->expectedValue);
     }
 
     /**

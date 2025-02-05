@@ -24,11 +24,15 @@ use Symfony\Component\HttpKernel\Controller\ControllerReference;
  */
 final class FragmentUriGenerator implements FragmentUriGeneratorInterface
 {
-    public function __construct(
-        private string $fragmentPath,
-        private ?UriSigner $signer = null,
-        private ?RequestStack $requestStack = null,
-    ) {
+    private string $fragmentPath;
+    private ?UriSigner $signer;
+    private ?RequestStack $requestStack;
+
+    public function __construct(string $fragmentPath, ?UriSigner $signer = null, ?RequestStack $requestStack = null)
+    {
+        $this->fragmentPath = $fragmentPath;
+        $this->signer = $signer;
+        $this->requestStack = $requestStack;
     }
 
     public function generate(ControllerReference $controller, ?Request $request = null, bool $absolute = false, bool $strict = true, bool $sign = true): string
@@ -79,7 +83,7 @@ final class FragmentUriGenerator implements FragmentUriGeneratorInterface
             if (\is_array($value)) {
                 $this->checkNonScalar($value);
             } elseif (!\is_scalar($value) && null !== $value) {
-                throw new \LogicException(\sprintf('Controller attributes cannot contain non-scalar/non-null values (value for key "%s" is not a scalar or null).', $key));
+                throw new \LogicException(sprintf('Controller attributes cannot contain non-scalar/non-null values (value for key "%s" is not a scalar or null).', $key));
             }
         }
     }

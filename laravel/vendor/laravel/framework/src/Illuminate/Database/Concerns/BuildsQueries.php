@@ -6,7 +6,6 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\MultipleRecordsFoundException;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Database\RecordNotFoundException;
 use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Pagination\Cursor;
 use Illuminate\Pagination\CursorPaginator;
@@ -19,12 +18,6 @@ use Illuminate\Support\Traits\Conditionable;
 use InvalidArgumentException;
 use RuntimeException;
 
-/**
- * @template TValue
- *
- * @mixin \Illuminate\Database\Eloquent\Builder
- * @mixin \Illuminate\Database\Query\Builder
- */
 trait BuildsQueries
 {
     use Conditionable;
@@ -33,7 +26,7 @@ trait BuildsQueries
      * Chunk the results of the query.
      *
      * @param  int  $count
-     * @param  callable(\Illuminate\Support\Collection<int, TValue>, int): mixed  $callback
+     * @param  callable  $callback
      * @return bool
      */
     public function chunk($count, callable $callback)
@@ -72,15 +65,13 @@ trait BuildsQueries
     /**
      * Run a map over each item while chunking.
      *
-     * @template TReturn
-     *
-     * @param  callable(TValue): TReturn  $callback
+     * @param  callable  $callback
      * @param  int  $count
-     * @return \Illuminate\Support\Collection<int, TReturn>
+     * @return \Illuminate\Support\Collection
      */
     public function chunkMap(callable $callback, $count = 1000)
     {
-        $collection = new Collection;
+        $collection = Collection::make();
 
         $this->chunk($count, function ($items) use ($collection, $callback) {
             $items->each(function ($item) use ($collection, $callback) {
@@ -94,7 +85,7 @@ trait BuildsQueries
     /**
      * Execute a callback over each item while chunking.
      *
-     * @param  callable(TValue, int): mixed  $callback
+     * @param  callable  $callback
      * @param  int  $count
      * @return bool
      *
@@ -115,7 +106,7 @@ trait BuildsQueries
      * Chunk the results of a query by comparing IDs.
      *
      * @param  int  $count
-     * @param  callable(\Illuminate\Support\Collection<int, TValue>, int): mixed  $callback
+     * @param  callable  $callback
      * @param  string|null  $column
      * @param  string|null  $alias
      * @return bool
@@ -129,7 +120,7 @@ trait BuildsQueries
      * Chunk the results of a query by comparing IDs in descending order.
      *
      * @param  int  $count
-     * @param  callable(\Illuminate\Support\Collection<int, TValue>, int): mixed  $callback
+     * @param  callable  $callback
      * @param  string|null  $column
      * @param  string|null  $alias
      * @return bool
@@ -143,13 +134,11 @@ trait BuildsQueries
      * Chunk the results of a query by comparing IDs in a given order.
      *
      * @param  int  $count
-     * @param  callable(\Illuminate\Support\Collection<int, TValue>, int): mixed  $callback
+     * @param  callable  $callback
      * @param  string|null  $column
      * @param  string|null  $alias
      * @param  bool  $descending
      * @return bool
-     *
-     * @throws \RuntimeException
      */
     public function orderedChunkById($count, callable $callback, $column = null, $alias = null, $descending = false)
     {
@@ -203,7 +192,7 @@ trait BuildsQueries
     /**
      * Execute a callback over each item while chunking by ID.
      *
-     * @param  callable(TValue, int): mixed  $callback
+     * @param  callable  $callback
      * @param  int  $count
      * @param  string|null  $column
      * @param  string|null  $alias
@@ -236,7 +225,7 @@ trait BuildsQueries
 
         $this->enforceOrderBy();
 
-        return new LazyCollection(function () use ($chunkSize) {
+        return LazyCollection::make(function () use ($chunkSize) {
             $page = 1;
 
             while (true) {
@@ -304,7 +293,7 @@ trait BuildsQueries
 
         $alias ??= $column;
 
-        return new LazyCollection(function () use ($chunkSize, $column, $alias, $descending) {
+        return LazyCollection::make(function () use ($chunkSize, $column, $alias, $descending) {
             $lastId = null;
 
             while (true) {
@@ -337,7 +326,7 @@ trait BuildsQueries
      * Execute the query and get the first result.
      *
      * @param  array|string  $columns
-     * @return TValue|null
+     * @return \Illuminate\Database\Eloquent\Model|object|static|null
      */
     public function first($columns = ['*'])
     {
@@ -345,28 +334,10 @@ trait BuildsQueries
     }
 
     /**
-     * Execute the query and get the first result or throw an exception.
-     *
-     * @param  array|string  $columns
-     * @param  string|null  $message
-     * @return TValue
-     *
-     * @throws \Illuminate\Database\RecordNotFoundException
-     */
-    public function firstOrFail($columns = ['*'], $message = null)
-    {
-        if (! is_null($result = $this->first($columns))) {
-            return $result;
-        }
-
-        throw new RecordNotFoundException($message ?: 'No record found for the given query.');
-    }
-
-    /**
      * Execute the query and get the first result if it's the sole matching record.
      *
      * @param  array|string  $columns
-     * @return TValue
+     * @return \Illuminate\Database\Eloquent\Model|object|static|null
      *
      * @throws \Illuminate\Database\RecordsNotFoundException
      * @throws \Illuminate\Database\MultipleRecordsFoundException
@@ -490,7 +461,7 @@ trait BuildsQueries
     /**
      * Get the original column name of the given column, without any aliasing.
      *
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<*>  $builder
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $builder
      * @param  string  $parameter
      * @return string
      */
@@ -567,7 +538,7 @@ trait BuildsQueries
     /**
      * Pass the query to a given callback.
      *
-     * @param  callable($this): mixed  $callback
+     * @param  callable  $callback
      * @return $this
      */
     public function tap($callback)

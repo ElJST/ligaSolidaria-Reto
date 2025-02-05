@@ -5,11 +5,10 @@ namespace Illuminate\Auth;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Traits\Macroable;
 
 class TokenGuard implements Guard
 {
-    use GuardHelpers, Macroable;
+    use GuardHelpers;
 
     /**
      * The request instance.
@@ -54,8 +53,8 @@ class TokenGuard implements Guard
         Request $request,
         $inputKey = 'api_token',
         $storageKey = 'api_token',
-        $hash = false,
-    ) {
+        $hash = false)
+    {
         $this->hash = $hash;
         $this->request = $request;
         $this->provider = $provider;

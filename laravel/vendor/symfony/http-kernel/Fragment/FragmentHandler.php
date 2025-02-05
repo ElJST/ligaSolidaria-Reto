@@ -29,27 +29,29 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class FragmentHandler
 {
-    /** @var array<string, FragmentRendererInterface> */
+    private bool $debug;
     private array $renderers = [];
+    private RequestStack $requestStack;
 
     /**
      * @param FragmentRendererInterface[] $renderers An array of FragmentRendererInterface instances
      * @param bool                        $debug     Whether the debug mode is enabled or not
      */
-    public function __construct(
-        private RequestStack $requestStack,
-        array $renderers = [],
-        private bool $debug = false,
-    ) {
+    public function __construct(RequestStack $requestStack, array $renderers = [], bool $debug = false)
+    {
+        $this->requestStack = $requestStack;
         foreach ($renderers as $renderer) {
             $this->addRenderer($renderer);
         }
+        $this->debug = $debug;
     }
 
     /**
      * Adds a renderer.
+     *
+     * @return void
      */
-    public function addRenderer(FragmentRendererInterface $renderer): void
+    public function addRenderer(FragmentRendererInterface $renderer)
     {
         $this->renderers[$renderer->getName()] = $renderer;
     }
@@ -71,7 +73,7 @@ class FragmentHandler
         }
 
         if (!isset($this->renderers[$renderer])) {
-            throw new \InvalidArgumentException(\sprintf('The "%s" renderer does not exist.', $renderer));
+            throw new \InvalidArgumentException(sprintf('The "%s" renderer does not exist.', $renderer));
         }
 
         if (!$request = $this->requestStack->getCurrentRequest()) {
@@ -95,7 +97,7 @@ class FragmentHandler
     {
         if (!$response->isSuccessful()) {
             $responseStatusCode = $response->getStatusCode();
-            throw new \RuntimeException(\sprintf('Error when rendering "%s" (Status code is %d).', $this->requestStack->getCurrentRequest()->getUri(), $responseStatusCode), 0, new HttpException($responseStatusCode));
+            throw new \RuntimeException(sprintf('Error when rendering "%s" (Status code is %d).', $this->requestStack->getCurrentRequest()->getUri(), $responseStatusCode), 0, new HttpException($responseStatusCode));
         }
 
         if (!$response instanceof StreamedResponse) {

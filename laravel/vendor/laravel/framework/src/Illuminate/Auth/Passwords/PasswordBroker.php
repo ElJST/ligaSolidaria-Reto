@@ -3,11 +3,9 @@
 namespace Illuminate\Auth\Passwords;
 
 use Closure;
-use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 use UnexpectedValueException;
 
@@ -28,25 +26,16 @@ class PasswordBroker implements PasswordBrokerContract
     protected $users;
 
     /**
-     * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
      * Create a new password broker instance.
      *
      * @param  \Illuminate\Auth\Passwords\TokenRepositoryInterface  $tokens
      * @param  \Illuminate\Contracts\Auth\UserProvider  $users
-     * @param  \Illuminate\Contracts\Events\Dispatcher|null  $dispatcher
      * @return void
      */
-    public function __construct(#[\SensitiveParameter] TokenRepositoryInterface $tokens, UserProvider $users, ?Dispatcher $dispatcher = null)
+    public function __construct(TokenRepositoryInterface $tokens, UserProvider $users)
     {
         $this->users = $users;
         $this->tokens = $tokens;
-        $this->events = $dispatcher;
     }
 
     /**
@@ -56,7 +45,7 @@ class PasswordBroker implements PasswordBrokerContract
      * @param  \Closure|null  $callback
      * @return string
      */
-    public function sendResetLink(#[\SensitiveParameter] array $credentials, ?Closure $callback = null)
+    public function sendResetLink(array $credentials, ?Closure $callback = null)
     {
         // First we will check to see if we found a user at the given credentials and
         // if we did not we will redirect back to this current URI with a piece of
@@ -82,8 +71,6 @@ class PasswordBroker implements PasswordBrokerContract
         // the current URI having nothing set in the session to indicate errors.
         $user->sendPasswordResetNotification($token);
 
-        $this->events?->dispatch(new PasswordResetLinkSent($user));
-
         return static::RESET_LINK_SENT;
     }
 
@@ -94,7 +81,7 @@ class PasswordBroker implements PasswordBrokerContract
      * @param  \Closure  $callback
      * @return mixed
      */
-    public function reset(#[\SensitiveParameter] array $credentials, Closure $callback)
+    public function reset(array $credentials, Closure $callback)
     {
         $user = $this->validateReset($credentials);
 
@@ -123,7 +110,7 @@ class PasswordBroker implements PasswordBrokerContract
      * @param  array  $credentials
      * @return \Illuminate\Contracts\Auth\CanResetPassword|string
      */
-    protected function validateReset(#[\SensitiveParameter] array $credentials)
+    protected function validateReset(array $credentials)
     {
         if (is_null($user = $this->getUser($credentials))) {
             return static::INVALID_USER;
@@ -144,7 +131,7 @@ class PasswordBroker implements PasswordBrokerContract
      *
      * @throws \UnexpectedValueException
      */
-    public function getUser(#[\SensitiveParameter] array $credentials)
+    public function getUser(array $credentials)
     {
         $credentials = Arr::except($credentials, ['token']);
 
@@ -186,7 +173,7 @@ class PasswordBroker implements PasswordBrokerContract
      * @param  string  $token
      * @return bool
      */
-    public function tokenExists(CanResetPasswordContract $user, #[\SensitiveParameter] $token)
+    public function tokenExists(CanResetPasswordContract $user, $token)
     {
         return $this->tokens->exists($user, $token);
     }

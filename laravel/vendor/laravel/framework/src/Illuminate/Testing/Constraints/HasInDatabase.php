@@ -51,9 +51,7 @@ class HasInDatabase extends Constraint
      */
     public function matches($table): bool
     {
-        return $this->database->table($table)
-            ->where($this->data)
-            ->exists();
+        return $this->database->table($table)->where($this->data)->count() > 0;
     }
 
     /**

@@ -30,9 +30,7 @@ class BroadcastController extends Controller
      * See: https://pusher.com/docs/channels/server_api/authenticating-users/#user-authentication.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array|null
-     *
-     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @return \Illuminate\Http\Response
      */
     public function authenticateUser(Request $request)
     {

@@ -2,6 +2,7 @@
 
 namespace Illuminate\Queue\Console;
 
+use Carbon\CarbonInterval;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Queue\Job;
@@ -12,19 +13,14 @@ use Illuminate\Queue\Events\JobReleasedAfterException;
 use Illuminate\Queue\Worker;
 use Illuminate\Queue\WorkerOptions;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\InteractsWithTime;
-use Illuminate\Support\Stringable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Terminal;
-use Throwable;
 
 use function Termwind\terminal;
 
 #[AsCommand(name: 'queue:work')]
 class WorkCommand extends Command
 {
-    use InteractsWithTime;
-
     /**
      * The console command name.
      *
@@ -46,8 +42,7 @@ class WorkCommand extends Command
                             {--sleep=3 : Number of seconds to sleep when no job is available}
                             {--rest=0 : Number of seconds to rest between jobs}
                             {--timeout=60 : The number of seconds a child process can run}
-                            {--tries=1 : Number of times to attempt a job before logging it failed}
-                            {--json : Output the queue worker information as JSON}';
+                            {--tries=1 : Number of times to attempt a job before logging it failed}';
 
     /**
      * The console command description.
@@ -76,13 +71,6 @@ class WorkCommand extends Command
      * @var float|null
      */
     protected $latestStartedAt;
-
-    /**
-     * Indicates if the worker's event listeners have been registered.
-     *
-     * @var bool
-     */
-    private static $hasRegisteredListeners = false;
 
     /**
      * Create a new queue work command.
@@ -123,9 +111,9 @@ class WorkCommand extends Command
         // connection being run for the queue operation currently being executed.
         $queue = $this->getQueue($connection);
 
-        if (! $this->outputUsingJson() && Terminal::hasSttyAvailable()) {
+        if (Terminal::hasSttyAvailable()) {
             $this->components->info(
-                sprintf('Processing jobs from the [%s] %s.', $queue, (new Stringable('queue'))->plural(explode(',', $queue)))
+                sprintf('Processing jobs from the [%s] %s.', $queue, str('queue')->plural(explode(',', $queue)))
             );
         }
 
@@ -180,10 +168,6 @@ class WorkCommand extends Command
      */
     protected function listenForEvents()
     {
-        if (static::$hasRegisteredListeners) {
-            return;
-        }
-
         $this->laravel['events']->listen(JobProcessing::class, function ($event) {
             $this->writeOutput($event->job, 'starting');
         });
@@ -197,27 +181,10 @@ class WorkCommand extends Command
         });
 
         $this->laravel['events']->listen(JobFailed::class, function ($event) {
-            $this->writeOutput($event->job, 'failed', $event->exception);
+            $this->writeOutput($event->job, 'failed');
 
             $this->logFailedJob($event);
         });
-
-        static::$hasRegisteredListeners = true;
-    }
-
-    /**
-     * Write the status output for the queue worker for JSON or TTY.
-     *
-     * @param  Job  $job
-     * @param  string  $status
-     * @param  Throwable|null  $exception
-     * @return void
-     */
-    protected function writeOutput(Job $job, $status, ?Throwable $exception = null)
-    {
-        $this->outputUsingJson()
-            ? $this->writeOutputAsJson($job, $status, $exception)
-            : $this->writeOutputForCli($job, $status);
     }
 
     /**
@@ -227,7 +194,7 @@ class WorkCommand extends Command
      * @param  string  $status
      * @return void
      */
-    protected function writeOutputForCli(Job $job, $status)
+    protected function writeOutput(Job $job, $status)
     {
         $this->output->write(sprintf(
             '  <fg=gray>%s</> %s%s',
@@ -250,7 +217,7 @@ class WorkCommand extends Command
             return $this->output->writeln(' <fg=yellow;options=bold>RUNNING</>');
         }
 
-        $runTime = $this->runTimeForHumans($this->latestStartedAt);
+        $runTime = $this->formatRunTime($this->latestStartedAt);
 
         $dots = max(terminal()->width() - mb_strlen($job->resolveName()) - (
             $this->output->isVerbose() ? (mb_strlen($job->getJobId()) + 1) : 0
@@ -264,45 +231,6 @@ class WorkCommand extends Command
             'released_after_exception' => ' <fg=yellow;options=bold>FAIL</>',
             default => ' <fg=red;options=bold>FAIL</>',
         });
-    }
-
-    /**
-     * Write the status output for the queue worker in JSON format.
-     *
-     * @param  \Illuminate\Contracts\Queue\Job  $job
-     * @param  string  $status
-     * @param  Throwable|null  $exception
-     * @return void
-     */
-    protected function writeOutputAsJson(Job $job, $status, ?Throwable $exception = null)
-    {
-        $log = array_filter([
-            'level' => $status === 'starting' || $status === 'success' ? 'info' : 'warning',
-            'id' => $job->getJobId(),
-            'uuid' => $job->uuid(),
-            'connection' => $job->getConnectionName(),
-            'queue' => $job->getQueue(),
-            'job' => $job->resolveName(),
-            'status' => $status,
-            'result' => match (true) {
-                $job->isDeleted() => 'deleted',
-                $job->isReleased() => 'released',
-                $job->hasFailed() => 'failed',
-                default => '',
-            },
-            'attempts' => $job->attempts(),
-            'exception' => $exception ? $exception::class : '',
-            'message' => $exception?->getMessage(),
-            'timestamp' => $this->now()->format('Y-m-d\TH:i:s.uP'),
-        ]);
-
-        if ($status === 'starting') {
-            $this->latestStartedAt = microtime(true);
-        } else {
-            $log['duration'] = round(microtime(true) - $this->latestStartedAt, 6);
-        }
-
-        $this->output->writeln(json_encode($log));
     }
 
     /**
@@ -320,6 +248,21 @@ class WorkCommand extends Command
         }
 
         return Carbon::now();
+    }
+
+    /**
+     * Given a start time, format the total run time for human readability.
+     *
+     * @param  float  $startTime
+     * @return string
+     */
+    protected function formatRunTime($startTime)
+    {
+        $runTime = (microtime(true) - $startTime) * 1000;
+
+        return $runTime > 1000
+            ? CarbonInterval::milliseconds($runTime)->cascade()->forHumans(short: true)
+            : number_format($runTime, 2).'ms';
     }
 
     /**
@@ -359,29 +302,5 @@ class WorkCommand extends Command
     protected function downForMaintenance()
     {
         return $this->option('force') ? false : $this->laravel->isDownForMaintenance();
-    }
-
-    /**
-     * Determine if the worker should output using JSON.
-     *
-     * @return bool
-     */
-    protected function outputUsingJson()
-    {
-        if (! $this->hasOption('json')) {
-            return false;
-        }
-
-        return $this->option('json');
-    }
-
-    /**
-     * Reset static variables.
-     *
-     * @return void
-     */
-    public static function flushState()
-    {
-        static::$hasRegisteredListeners = false;
     }
 }

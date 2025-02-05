@@ -1,0 +1,223 @@
+/* VARIABLES DE COLOR */
+:root {
+  --main-bg-color: rgb(84, 131, 94);
+  --main-bg-text-color: white;
+  --main-bg-color-middle: rgb(197, 25, 45);
+  --main-bg-color-light: rgba(0, 51, 102, 0.02);
+  --main-text-color: #333;
+  --main-title-color: #8f1902;
+}
+
+/* ESTILOS GENERALES */
+body {
+  font-family: 'Helvetica', 'Roboto', Arial, sans-serif;
+  background-color: var(--main-bg-color-light);
+  color: var(--main-text-color);
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--main-title-color);
+}
+
+.container {
+  max-width: 1200px;
+  padding: 0 15px;
+}
+
+.container h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.container p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #495057;
+}
+
+/* ESTILOS DE LA BARRA DE NAVEGACIÓN */
+.navbar {
+  background-color: var(--main-bg-color);
+  color: var(--main-bg-text-color);
+  padding: 10px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  transition: top 0.3s;
+}
+
+.navbar-visible {
+  transform: translateY(0);
+}
+
+.navbar-fixed {
+  transform: translateY(0);
+  display: inline-block;
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+  color: var(--main-bg-text-color) !important;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--main-title-color) !important;
+}
+
+.navbar-toggler-icon {
+  background-color: var(--main-bg-text-color);
+}
+
+/* TARJETAS */
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 0 0 10px 10px;
+}
+
+.card-title {
+  color: var(--main-title-color);
+  font-weight: bold;
+}
+
+.card-text {
+  color: var(--main-text-color);
+}
+
+.card-img-top {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 10px;
+  display: block;
+}
+
+/* PAGINACIÓN */
+.paginacion {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* FOOTER */
+footer {
+  background-color: var(--main-bg-color);
+  color: var(--main-bg-text-color);
+  padding: 2rem 0;
+  text-align: center;
+}
+
+footer a {
+  color: var(--main-bg-text-color);
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: var(--main-title-color);
+}
+
+/* BOTONES */
+.btn-lsfpc {
+  color: var(--main-bg-text-color);
+  background-color: var(--main-bg-color);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.btn-lsfpc:hover {
+  background-color: var(--main-title-color);
+}
+
+/* BOTÓN VOLVER ARRIBA */
+#btn-back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: none;
+  background-color: var(--main-title-color);
+  color: var(--main-bg-text-color);
+  border-radius: 50%;
+  padding: 10px;
+}
+
+
+
+
+/* PAGE
+:root{
+  --main-bg-color: rgb(84, 131, 94);
+  --main-bg-text-color: white;
+  --main-bg-color-middle: rgb(197, 25, 45);
+  --main-bg-color-light: rgba(0, 51, 102, 0.02);
+  --main-text-color: #333;
+  --main-title-color: #8f1902;
+}
+
+body {
+    font-family: 'Helvetica', sans-serif;
+    background-color: #f0f4f8;
+    color: #212529;
+}
+.navbar {
+    background-color: #343a40;
+}
+.navbar-brand, .navbar-nav .nav-link {
+    color: #ffffff !important;
+}
+.navbar-brand:hover, .navbar-nav .nav-link:hover {
+    color: #e3f2fd !important;
+}
+.navbar-toggler-icon {
+    background-color: #ffffff;
+}
+footer {
+    background-color: #212529;
+    color: #ffffff;
+    padding: 2rem 0;
+    text-align: center;
+}
+footer a {
+    color: #f8f9fa;
+    text-decoration: none;
+}
+footer a:hover {
+    color: #007bff;
+}
+.container {
+    max-width: 1200px;
+    padding: 0 15px;
+}
+.container h1 {
+    font-size: 2.5rem;
+    color: #333;
+    font-weight: bold;
+}
+.container p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #495057;
+} */
+
+/* .card-img-top {
+  width: 100%;
+  height: auto; 
+  max-height: 200px; 
+  object-fit: contain; 
+  border-radius: 10px; 
+  display: block; 
+}
+
+.paginacion{
+  margin-top: 20px;
+  text-align: center;
+} */
+

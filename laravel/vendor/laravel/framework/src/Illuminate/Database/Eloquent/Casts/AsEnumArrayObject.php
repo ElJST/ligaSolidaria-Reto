@@ -7,8 +7,6 @@ use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Collection;
 
-use function Illuminate\Support\enum_value;
-
 class AsEnumArrayObject implements Castable
 {
     /**
@@ -79,19 +77,8 @@ class AsEnumArrayObject implements Castable
                     return $enum;
                 }
 
-                return enum_value($enum);
+                return $enum instanceof BackedEnum ? $enum->value : $enum->name;
             }
         };
-    }
-
-    /**
-     * Specify the Enum for the cast.
-     *
-     * @param  class-string  $class
-     * @return string
-     */
-    public static function of($class)
-    {
-        return static::class.':'.$class;
     }
 }

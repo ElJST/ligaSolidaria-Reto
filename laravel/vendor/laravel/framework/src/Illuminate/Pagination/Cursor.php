@@ -3,7 +3,6 @@
 namespace Illuminate\Pagination;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Collection;
 use UnexpectedValueException;
 
 class Cursor implements Arrayable
@@ -59,7 +58,7 @@ class Cursor implements Arrayable
      */
     public function parameters(array $parameterNames)
     {
-        return (new Collection($parameterNames))->map(function ($parameterName) {
+        return collect($parameterNames)->map(function ($parameterName) {
             return $this->parameter($parameterName);
         })->toArray();
     }

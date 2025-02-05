@@ -77,13 +77,13 @@ class ViewCacheCommand extends Command
      */
     protected function bladeFilesIn(array $paths)
     {
-        $extensions = (new Collection($this->laravel['view']->getExtensions()))
+        $extensions = collect($this->laravel['view']->getExtensions())
             ->filter(fn ($value) => $value === 'blade')
             ->keys()
             ->map(fn ($extension) => "*.{$extension}")
             ->all();
 
-        return new Collection(
+        return collect(
             Finder::create()
                 ->in($paths)
                 ->exclude('vendor')
@@ -101,8 +101,8 @@ class ViewCacheCommand extends Command
     {
         $finder = $this->laravel['view']->getFinder();
 
-        return (new Collection($finder->getPaths()))->merge(
-            (new Collection($finder->getHints()))->flatten()
+        return collect($finder->getPaths())->merge(
+            collect($finder->getHints())->flatten()
         );
     }
 }

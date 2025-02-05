@@ -17,7 +17,6 @@ use PHPUnit\Event\Telemetry\Info;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\IncompleteTestError;
 use PHPUnit\Framework\SkippedWithMessageException;
-use PHPUnit\Runner\TestSuiteSorter;
 use PHPUnit\TestRunner\TestResult\TestResult as PHPUnitTestResult;
 use PHPUnit\TextUI\Configuration\Registry;
 use ReflectionClass;
@@ -257,7 +256,7 @@ final class Style
                 sprintf(
                     '  <fg=gray>Tests:</>    <fg=default>%s</><fg=gray> (%s assertions)</>',
                     implode('<fg=gray>,</> ', $tests),
-                    $result->numberOfAssertions(),
+                    $result->numberOfAssertions()
                 ),
             ]);
         }
@@ -268,16 +267,6 @@ final class Style
                 $timeElapsed
             ),
         ]);
-
-        $configuration = Registry::get();
-        if ($configuration->executionOrder() === TestSuiteSorter::ORDER_RANDOMIZED) {
-            $this->output->writeln([
-                sprintf(
-                    '  <fg=gray>Random Order Seed:</> <fg=default>%s</>',
-                    $configuration->randomOrderSeed(),
-                ),
-            ]);
-        }
 
         $this->output->writeln('');
     }
@@ -464,14 +453,7 @@ final class Style
             }
         }
 
-        $description = $result->description;
-
-        /** @var string $description */
-        $description = preg_replace('/`([^`]+)`/', '<span class="text-white">$1</span>', $description);
-
-        if (class_exists(\Pest\Collision\Events::class)) {
-            $description = \Pest\Collision\Events::beforeTestMethodDescription($result, $description);
-        }
+        $description = preg_replace('/`([^`]+)`/', '<span class="text-white">$1</span>', $result->description);
 
         renderUsing($this->output);
         render(sprintf(<<<'HTML'
@@ -481,8 +463,6 @@ final class Style
                 </span>%s
             </div>
         HTML, $seconds === '' ? '' : 'flex space-x-1 justify-between', $truncateClasses, $result->color, $result->icon, $description, $warning, $seconds));
-
-        class_exists(\Pest\Collision\Events::class) && \Pest\Collision\Events::afterTestMethodDescription($result);
     }
 
     /**

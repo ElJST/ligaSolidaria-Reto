@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use ReflectionClass;
 
@@ -31,7 +30,7 @@ trait HasGlobalScopes
     {
         $reflectionClass = new ReflectionClass(static::class);
 
-        return (new Collection($reflectionClass->getAttributes(ScopedBy::class)))
+        return collect($reflectionClass->getAttributes(ScopedBy::class))
             ->map(fn ($attribute) => $attribute->getArguments())
             ->flatten()
             ->all();

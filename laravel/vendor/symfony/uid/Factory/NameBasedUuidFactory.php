@@ -17,10 +17,13 @@ use Symfony\Component\Uid\UuidV5;
 
 class NameBasedUuidFactory
 {
-    public function __construct(
-        private string $class,
-        private Uuid $namespace,
-    ) {
+    private string $class;
+    private Uuid $namespace;
+
+    public function __construct(string $class, Uuid $namespace)
+    {
+        $this->class = $class;
+        $this->namespace = $namespace;
     }
 
     public function create(string $name): UuidV5|UuidV3

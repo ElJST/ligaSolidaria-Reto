@@ -2,11 +2,7 @@
 
 namespace Illuminate\Foundation\Support\Providers;
 
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Events\DiscoverEvents;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,20 +30,6 @@ class EventServiceProvider extends ServiceProvider
     protected $observers = [];
 
     /**
-     * Indicates if events should be discovered.
-     *
-     * @var bool
-     */
-    protected static $shouldDiscoverEvents = true;
-
-    /**
-     * The configured event discovery paths.
-     *
-     * @var array|null
-     */
-    protected static $eventDiscoveryPaths;
-
-    /**
      * Register the application's event listeners.
      *
      * @return void
@@ -70,10 +52,6 @@ class EventServiceProvider extends ServiceProvider
             foreach ($this->observers as $model => $observers) {
                 $model::observe($observers);
             }
-        });
-
-        $this->booted(function () {
-            $this->configureEmailVerification();
         });
     }
 
@@ -135,7 +113,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function shouldDiscoverEvents()
     {
-        return get_class($this) === __CLASS__ && static::$shouldDiscoverEvents === true;
+        return false;
     }
 
     /**
@@ -145,19 +123,16 @@ class EventServiceProvider extends ServiceProvider
      */
     public function discoverEvents()
     {
-        return (new Collection($this->discoverEventsWithin()))
-            ->flatMap(function ($directory) {
-                return glob($directory, GLOB_ONLYDIR);
-            })
-            ->reject(function ($directory) {
-                return ! is_dir($directory);
-            })
-            ->reduce(function ($discovered, $directory) {
-                return array_merge_recursive(
-                    $discovered,
-                    DiscoverEvents::within($directory, $this->eventDiscoveryBasePath())
-                );
-            }, []);
+        return collect($this->discoverEventsWithin())
+                    ->reject(function ($directory) {
+                        return ! is_dir($directory);
+                    })
+                    ->reduce(function ($discovered, $directory) {
+                        return array_merge_recursive(
+                            $discovered,
+                            DiscoverEvents::within($directory, $this->eventDiscoveryBasePath())
+                        );
+                    }, []);
     }
 
     /**
@@ -167,33 +142,9 @@ class EventServiceProvider extends ServiceProvider
      */
     protected function discoverEventsWithin()
     {
-        return static::$eventDiscoveryPaths ?: [
+        return [
             $this->app->path('Listeners'),
         ];
-    }
-
-    /**
-     * Add the given event discovery paths to the application's event discovery paths.
-     *
-     * @param  string|array  $paths
-     * @return void
-     */
-    public static function addEventDiscoveryPaths(array|string $paths)
-    {
-        static::$eventDiscoveryPaths = array_values(array_unique(
-            array_merge(static::$eventDiscoveryPaths, Arr::wrap($paths))
-        ));
-    }
-
-    /**
-     * Set the globally configured event discovery paths.
-     *
-     * @param  array  $paths
-     * @return void
-     */
-    public static function setEventDiscoveryPaths(array $paths)
-    {
-        static::$eventDiscoveryPaths = $paths;
     }
 
     /**
@@ -204,28 +155,5 @@ class EventServiceProvider extends ServiceProvider
     protected function eventDiscoveryBasePath()
     {
         return base_path();
-    }
-
-    /**
-     * Disable event discovery for the application.
-     *
-     * @return void
-     */
-    public static function disableEventDiscovery()
-    {
-        static::$shouldDiscoverEvents = false;
-    }
-
-    /**
-     * Configure the proper event listeners for email verification.
-     *
-     * @return void
-     */
-    protected function configureEmailVerification()
-    {
-        if (! isset($this->listen[Registered::class]) ||
-            ! in_array(SendEmailVerificationNotification::class, Arr::wrap($this->listen[Registered::class]))) {
-            Event::listen(Registered::class, SendEmailVerificationNotification::class);
-        }
     }
 }

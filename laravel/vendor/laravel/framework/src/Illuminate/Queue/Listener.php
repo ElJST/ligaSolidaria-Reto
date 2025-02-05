@@ -3,10 +3,8 @@
 namespace Illuminate\Queue;
 
 use Closure;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
-
-use function Illuminate\Support\artisan_binary;
-use function Illuminate\Support\php_binary;
 
 class Listener
 {
@@ -63,7 +61,7 @@ class Listener
      */
     protected function phpBinary()
     {
-        return php_binary();
+        return (new PhpExecutableFinder)->find(false);
     }
 
     /**
@@ -73,7 +71,7 @@ class Listener
      */
     protected function artisanBinary()
     {
-        return artisan_binary();
+        return defined('ARTISAN_BINARY') ? ARTISAN_BINARY : 'artisan';
     }
 
     /**

@@ -226,7 +226,7 @@ class FakeInvokedProcess implements InvokedProcessContract
             $this->nextOutputIndex = $i + 1;
         }
 
-        return $output ?? '';
+        return isset($output) ? $output : '';
     }
 
     /**
@@ -249,7 +249,7 @@ class FakeInvokedProcess implements InvokedProcessContract
             $this->nextErrorOutputIndex = $i + 1;
         }
 
-        return $output ?? '';
+        return isset($output) ? $output : '';
     }
 
     /**
@@ -290,7 +290,7 @@ class FakeInvokedProcess implements InvokedProcessContract
     /**
      * Set the general output handler for the fake invoked process.
      *
-     * @param  callable|null  $outputHandler
+     * @param  callable|null  $output
      * @return $this
      */
     public function withOutputHandler(?callable $outputHandler)

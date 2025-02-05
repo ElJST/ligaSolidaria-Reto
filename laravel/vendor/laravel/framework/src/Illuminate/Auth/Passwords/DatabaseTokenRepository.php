@@ -63,14 +63,10 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
      * @param  int  $throttle
      * @return void
      */
-    public function __construct(
-        ConnectionInterface $connection,
-        HasherContract $hasher,
-        $table,
-        $hashKey,
-        $expires = 60,
-        $throttle = 60,
-    ) {
+    public function __construct(ConnectionInterface $connection, HasherContract $hasher,
+                                $table, $hashKey, $expires = 60,
+                                $throttle = 60)
+    {
         $this->table = $table;
         $this->hasher = $hasher;
         $this->hashKey = $hashKey;
@@ -119,7 +115,7 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
      * @param  string  $token
      * @return array
      */
-    protected function getPayload($email, #[\SensitiveParameter] $token)
+    protected function getPayload($email, $token)
     {
         return ['email' => $email, 'token' => $this->hasher->make($token), 'created_at' => new Carbon];
     }
@@ -131,7 +127,7 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
      * @param  string  $token
      * @return bool
      */
-    public function exists(CanResetPasswordContract $user, #[\SensitiveParameter] $token)
+    public function exists(CanResetPasswordContract $user, $token)
     {
         $record = (array) $this->getTable()->where(
             'email', $user->getEmailForPasswordReset()

@@ -4,7 +4,6 @@ namespace Illuminate\Process;
 
 use Closure;
 use Illuminate\Process\Exceptions\ProcessTimedOutException;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use LogicException;
@@ -350,8 +349,8 @@ class PendingProcess
      */
     protected function fakeFor(string $command)
     {
-        return (new Collection($this->fakeHandlers))
-            ->first(fn ($handler, $pattern) => $pattern === '*' || Str::is($pattern, $command));
+        return collect($this->fakeHandlers)
+                ->first(fn ($handler, $pattern) => $pattern === '*' || Str::is($pattern, $command));
     }
 
     /**
@@ -365,10 +364,6 @@ class PendingProcess
     {
         $result = $fake($this);
 
-        if (is_int($result)) {
-            return (new FakeProcessResult(exitCode: $result))->withCommand($command);
-        }
-
         if (is_string($result) || is_array($result)) {
             return (new FakeProcessResult(output: $result))->withCommand($command);
         }
@@ -378,7 +373,6 @@ class PendingProcess
             $result instanceof FakeProcessResult => $result->withCommand($command),
             $result instanceof FakeProcessDescription => $result->toProcessResult($command),
             $result instanceof FakeProcessSequence => $this->resolveSynchronousFake($command, fn () => $result()),
-            $result instanceof \Throwable => throw $result,
             default => throw new LogicException('Unsupported synchronous process fake result provided.'),
         };
     }

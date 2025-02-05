@@ -7,24 +7,6 @@ use Illuminate\Database\DatabaseTransactionsManager as BaseManager;
 class DatabaseTransactionsManager extends BaseManager
 {
     /**
-     * The names of the connections transacting during tests.
-     */
-    protected array $connectionsTransacting;
-
-    /**
-     * Create a new database transaction manager instance.
-     *
-     * @param  array  $connectionsTransacting
-     * @return void
-     */
-    public function __construct(array $connectionsTransacting)
-    {
-        parent::__construct();
-
-        $this->connectionsTransacting = $connectionsTransacting;
-    }
-
-    /**
      * Register a transaction callback.
      *
      * @param  callable  $callback
@@ -49,7 +31,7 @@ class DatabaseTransactionsManager extends BaseManager
      */
     public function callbackApplicableTransactions()
     {
-        return $this->pendingTransactions->skip(count($this->connectionsTransacting))->values();
+        return $this->pendingTransactions->skip(1)->values();
     }
 
     /**

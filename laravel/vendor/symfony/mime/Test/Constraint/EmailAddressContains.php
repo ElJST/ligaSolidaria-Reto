@@ -18,15 +18,18 @@ use Symfony\Component\Mime\RawMessage;
 
 final class EmailAddressContains extends Constraint
 {
-    public function __construct(
-        private string $headerName,
-        private string $expectedValue,
-    ) {
+    private string $headerName;
+    private string $expectedValue;
+
+    public function __construct(string $headerName, string $expectedValue)
+    {
+        $this->headerName = $headerName;
+        $this->expectedValue = $expectedValue;
     }
 
     public function toString(): string
     {
-        return \sprintf('contains address "%s" with value "%s"', $this->headerName, $this->expectedValue);
+        return sprintf('contains address "%s" with value "%s"', $this->headerName, $this->expectedValue);
     }
 
     /**
@@ -59,6 +62,6 @@ final class EmailAddressContains extends Constraint
      */
     protected function failureDescription($message): string
     {
-        return \sprintf('the Email %s (value is %s)', $this->toString(), $message->getHeaders()->get($this->headerName)->getBodyAsString());
+        return sprintf('the Email %s (value is %s)', $this->toString(), $message->getHeaders()->get($this->headerName)->getBodyAsString());
     }
 }

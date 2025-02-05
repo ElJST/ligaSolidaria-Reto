@@ -3,10 +3,7 @@
 namespace Illuminate\Events;
 
 use Closure;
-use Illuminate\Support\Collection;
 use Laravel\SerializableClosure\SerializableClosure;
-
-use function Illuminate\Support\enum_value;
 
 class QueuedClosure
 {
@@ -72,12 +69,12 @@ class QueuedClosure
     /**
      * Set the desired queue for the job.
      *
-     * @param  \BackedEnum|string|null  $queue
+     * @param  string|null  $queue
      * @return $this
      */
     public function onQueue($queue)
     {
-        $this->queue = enum_value($queue);
+        $this->queue = $queue;
 
         return $this;
     }
@@ -119,9 +116,9 @@ class QueuedClosure
             dispatch(new CallQueuedListener(InvokeQueuedClosure::class, 'handle', [
                 'closure' => new SerializableClosure($this->closure),
                 'arguments' => $arguments,
-                'catch' => (new Collection($this->catchCallbacks))
-                    ->map(fn ($callback) => new SerializableClosure($callback))
-                    ->all(),
+                'catch' => collect($this->catchCallbacks)->map(function ($callback) {
+                    return new SerializableClosure($callback);
+                })->all(),
             ]))->onConnection($this->connection)->onQueue($this->queue)->delay($this->delay);
         };
     }

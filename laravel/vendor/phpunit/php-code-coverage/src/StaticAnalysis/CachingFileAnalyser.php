@@ -9,7 +9,6 @@
  */
 namespace SebastianBergmann\CodeCoverage\StaticAnalysis;
 
-use const DIRECTORY_SEPARATOR;
 use function file_get_contents;
 use function file_put_contents;
 use function implode;
@@ -23,12 +22,7 @@ use SebastianBergmann\FileIterator\Facade as FileIteratorFacade;
 /**
  * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
  *
- * @phpstan-import-type CodeUnitFunctionType from \SebastianBergmann\CodeCoverage\StaticAnalysis\CodeUnitFindingVisitor
- * @phpstan-import-type CodeUnitMethodType from \SebastianBergmann\CodeCoverage\StaticAnalysis\CodeUnitFindingVisitor
- * @phpstan-import-type CodeUnitClassType from \SebastianBergmann\CodeCoverage\StaticAnalysis\CodeUnitFindingVisitor
- * @phpstan-import-type CodeUnitTraitType from \SebastianBergmann\CodeCoverage\StaticAnalysis\CodeUnitFindingVisitor
- * @phpstan-import-type LinesOfCodeType from \SebastianBergmann\CodeCoverage\StaticAnalysis\FileAnalyser
- * @phpstan-import-type LinesType from \SebastianBergmann\CodeCoverage\StaticAnalysis\FileAnalyser
+ * @psalm-import-type LinesOfCodeType from \SebastianBergmann\CodeCoverage\StaticAnalysis\FileAnalyser
  */
 final class CachingFileAnalyser implements FileAnalyser
 {
@@ -49,9 +43,6 @@ final class CachingFileAnalyser implements FileAnalyser
         $this->ignoreDeprecatedCode          = $ignoreDeprecatedCode;
     }
 
-    /**
-     * @return array<string, CodeUnitClassType>
-     */
     public function classesIn(string $filename): array
     {
         if (!isset($this->cache[$filename])) {
@@ -61,9 +52,6 @@ final class CachingFileAnalyser implements FileAnalyser
         return $this->cache[$filename]['classesIn'];
     }
 
-    /**
-     * @return array<string, CodeUnitTraitType>
-     */
     public function traitsIn(string $filename): array
     {
         if (!isset($this->cache[$filename])) {
@@ -73,9 +61,6 @@ final class CachingFileAnalyser implements FileAnalyser
         return $this->cache[$filename]['traitsIn'];
     }
 
-    /**
-     * @return array<string, CodeUnitFunctionType>
-     */
     public function functionsIn(string $filename): array
     {
         if (!isset($this->cache[$filename])) {
@@ -86,7 +71,7 @@ final class CachingFileAnalyser implements FileAnalyser
     }
 
     /**
-     * @return LinesOfCodeType
+     * @psalm-return LinesOfCodeType
      */
     public function linesOfCodeFor(string $filename): array
     {
@@ -97,9 +82,6 @@ final class CachingFileAnalyser implements FileAnalyser
         return $this->cache[$filename]['linesOfCodeFor'];
     }
 
-    /**
-     * @return LinesType
-     */
     public function executableLinesIn(string $filename): array
     {
         if (!isset($this->cache[$filename])) {
@@ -109,9 +91,6 @@ final class CachingFileAnalyser implements FileAnalyser
         return $this->cache[$filename]['executableLinesIn'];
     }
 
-    /**
-     * @return LinesType
-     */
     public function ignoredLinesFor(string $filename): array
     {
         if (!isset($this->cache[$filename])) {

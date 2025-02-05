@@ -8,7 +8,6 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 
 class BroadcastNotificationCreated implements ShouldBroadcast
 {
@@ -72,9 +71,9 @@ class BroadcastNotificationCreated implements ShouldBroadcast
             return [new PrivateChannel($channels)];
         }
 
-        return (new Collection($channels))
-            ->map(fn ($channel) => new PrivateChannel($channel))
-            ->all();
+        return collect($channels)->map(function ($channel) {
+            return new PrivateChannel($channel);
+        })->all();
     }
 
     /**

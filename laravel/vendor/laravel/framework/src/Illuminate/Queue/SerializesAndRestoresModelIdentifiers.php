@@ -8,7 +8,6 @@ use Illuminate\Contracts\Queue\QueueableEntity;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\Collection;
 
 trait SerializesAndRestoresModelIdentifiers
 {
@@ -91,9 +90,9 @@ trait SerializesAndRestoresModelIdentifiers
         $collectionClass = get_class($collection);
 
         return new $collectionClass(
-            (new Collection($value->id))
-                ->map(fn ($id) => $collection[$id] ?? null)
-                ->filter()
+            collect($value->id)->map(function ($id) use ($collection) {
+                return $collection[$id] ?? null;
+            })->filter()
         );
     }
 
@@ -113,11 +112,9 @@ trait SerializesAndRestoresModelIdentifiers
     /**
      * Get the query for model restoration.
      *
-     * @template TModel of \Illuminate\Database\Eloquent\Model
-     *
-     * @param  TModel  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  array|int  $ids
-     * @return \Illuminate\Database\Eloquent\Builder<TModel>
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     protected function getQueryForModelRestoration($model, $ids)
     {

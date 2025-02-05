@@ -198,9 +198,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
             };
 
             $resetScope = function () use ($app) {
-                if (method_exists($app['log'], 'flushSharedContext')) {
-                    $app['log']->flushSharedContext();
-                }
+                $app['log']->flushSharedContext();
 
                 if (method_exists($app['log'], 'withoutContext')) {
                     $app['log']->withoutContext();
@@ -314,11 +312,9 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
         ];
 
         if (! empty($config['key']) && ! empty($config['secret'])) {
-            $dynamoConfig['credentials'] = Arr::only($config, ['key', 'secret']);
-
-            if (! empty($config['token'])) {
-                $dynamoConfig['credentials']['token'] = $config['token'];
-            }
+            $dynamoConfig['credentials'] = Arr::only(
+                $config, ['key', 'secret', 'token']
+            );
         }
 
         return new DynamoDbFailedJobProvider(

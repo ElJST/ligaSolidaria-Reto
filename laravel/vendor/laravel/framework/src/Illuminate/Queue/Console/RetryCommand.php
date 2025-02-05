@@ -7,7 +7,6 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Queue\Events\JobRetryRequested;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -101,7 +100,7 @@ class RetryCommand extends Command
 
         $ids = method_exists($failer, 'ids')
             ? $failer->ids($queue)
-            : (new Collection($failer->all()))
+            : collect($failer->all())
                 ->where('queue', $queue)
                 ->pluck('id')
                 ->toArray();

@@ -7,12 +7,9 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Foundation\Queue\InteractsWithUniqueJobs;
 
 class PendingDispatch
 {
-    use InteractsWithUniqueJobs;
-
     /**
      * The job.
      *
@@ -41,7 +38,7 @@ class PendingDispatch
     /**
      * Set the desired connection for the job.
      *
-     * @param  \BackedEnum|string|null  $connection
+     * @param  string|null  $connection
      * @return $this
      */
     public function onConnection($connection)
@@ -54,7 +51,7 @@ class PendingDispatch
     /**
      * Set the desired queue for the job.
      *
-     * @param  \BackedEnum|string|null  $queue
+     * @param  string|null  $queue
      * @return $this
      */
     public function onQueue($queue)
@@ -67,7 +64,7 @@ class PendingDispatch
     /**
      * Set the desired connection for the chain.
      *
-     * @param  \BackedEnum|string|null  $connection
+     * @param  string|null  $connection
      * @return $this
      */
     public function allOnConnection($connection)
@@ -80,7 +77,7 @@ class PendingDispatch
     /**
      * Set the desired queue for the chain.
      *
-     * @param  \BackedEnum|string|null  $queue
+     * @param  string|null  $queue
      * @return $this
      */
     public function allOnQueue($queue)
@@ -99,18 +96,6 @@ class PendingDispatch
     public function delay($delay)
     {
         $this->job->delay($delay);
-
-        return $this;
-    }
-
-    /**
-     * Set the delay for the job to zero seconds.
-     *
-     * @return $this
-     */
-    public function withoutDelay()
-    {
-        $this->job->withoutDelay();
 
         return $this;
     }
@@ -176,17 +161,7 @@ class PendingDispatch
         }
 
         return (new UniqueLock(Container::getInstance()->make(Cache::class)))
-            ->acquire($this->job);
-    }
-
-    /**
-     * Get the underlying job instance.
-     *
-     * @return mixed
-     */
-    public function getJob()
-    {
-        return $this->job;
+                    ->acquire($this->job);
     }
 
     /**
@@ -210,18 +185,12 @@ class PendingDispatch
      */
     public function __destruct()
     {
-        $this->addUniqueJobInformationToContext($this->job);
-
         if (! $this->shouldDispatch()) {
-            $this->removeUniqueJobInformationFromContext($this->job);
-
             return;
         } elseif ($this->afterResponse) {
             app(Dispatcher::class)->dispatchAfterResponse($this->job);
         } else {
             app(Dispatcher::class)->dispatch($this->job);
         }
-
-        $this->removeUniqueJobInformationFromContext($this->job);
     }
 }
