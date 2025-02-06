@@ -99,12 +99,12 @@ class RetoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        $reto = Reto::findOrFail($id);
-        dd($reto);
-        return view('retos.show', compact('reto'));
+        $reto = Reto::with('multimedia')->findOrFail($id);
+        return view('web_solidaria/retos.show', compact('reto'));
     }
+    
 
     /**
      * Show the form for editing the specified resource.

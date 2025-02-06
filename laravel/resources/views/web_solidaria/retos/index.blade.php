@@ -98,9 +98,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 @endif
             
                 <div class="card-body">
-                    <h5 class="card-title">{{ $reto->nombre }}</h5>
-                    <p class="card-text"><strong>Descripción:</strong> {{ $reto->descripcion }}</p>
-                    <p class="card-text"><strong>Estudios:</strong> {{ $reto->estudios }}</p>
+                <a href="{{ route('retos.show', $reto->id_reto) }}" target="_blank">
+    <h5 class="card-title">{{ $reto->nombre }}</h5>
+</a>
+
+
+
                 </div>
             </div>
         </div>

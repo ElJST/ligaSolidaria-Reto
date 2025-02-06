@@ -30,3 +30,6 @@ Route::delete('admin/retos/{id}', [RetoController::class, 'destroy'])->name('ret
 Route::get('/torneos', [FiltroController::class, 'getTorneos']);
 Route::get('/centros/{torneoId}', [FiltroController::class, 'getCentros']);
 Route::get('/centros-por-torneo/{torneoId}', [RetoController::class, 'centrosPorTorneo']);
+
+
+Route::get('retos/{id}', [RetoController::class, 'show'])->name('retos.show');
