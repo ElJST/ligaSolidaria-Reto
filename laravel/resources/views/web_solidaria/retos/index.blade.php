@@ -32,17 +32,55 @@
         <main class="col-12 p-5">
             <h1 class="text-dark mb-4">Lista de Retos</h1>
             <form method="GET" action="{{ route('retos.indexsololectura') }}">
-    <label for="fk_centro">Filtrar por centro:</label>
-    <select name="fk_centro" id="fk_centro" onchange="this.form.submit()">
-        <option value="">Todos los centros</option>
-        @foreach ($centros as $centro)
-            <option value="{{ $centro->id_centro }}" {{ $centroSeleccionado == $centro->id_centro ? 'selected' : '' }}>
-                {{ $centro->nombre }}
-            </option>
-        @endforeach
-    </select>
-    
+    <!-- Filtro por Torneo -->
+    <div class="form-group">
+        <label for="fk_torneo">Filtrar por Torneo:</label>
+        <select name="fk_torneo" id="fk_torneo" class="form-control">
+            <option value="">Selecciona un Torneo</option>
+            @foreach($torneos as $torneo)
+                <option value="{{ $torneo->id_torneo }}" {{ request('fk_torneo') == $torneo->id_torneo ? 'selected' : '' }}>
+                    {{ $torneo->nombre }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <!-- Filtro por Centro (inicialmente deshabilitado) -->
+    <div class="form-group">
+        <label for="fk_centro">Filtrar por Centro:</label>
+        <select name="fk_centro" id="fk_centro" class="form-control" {{ empty($torneoSeleccionado) ? 'disabled' : '' }}>
+            <option value="">Todos los Centros</option>
+            @foreach($centros as $centro)
+                <option value="{{ $centro->id_centro }}" {{ request('fk_centro') == $centro->id_centro ? 'selected' : '' }}>
+                    {{ $centro->nombre }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Filtrar</button>
 </form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let torneoSelect = document.getElementById("fk_torneo");
+    let centroSelect = document.getElementById("fk_centro");
+
+    torneoSelect.addEventListener("change", function () {
+        if (torneoSelect.value) {
+            centroSelect.removeAttribute("disabled");
+
+            // Recargar la página con el torneo seleccionado para actualizar la lista de centros
+            window.location.href = "{{ route('retos.indexsololectura') }}?fk_torneo=" + torneoSelect.value;
+        } else {
+            centroSelect.setAttribute("disabled", "disabled");
+            centroSelect.value = "";
+        }
+    });
+});
+</script>
+
+
            <!-- Contenedor de tarjetas -->
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-4">
         @foreach ($retos as $reto)

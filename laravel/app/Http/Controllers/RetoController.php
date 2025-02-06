@@ -14,21 +14,38 @@ class RetoController extends Controller
     
     public function indexsololectura(Request $request)
 {
-    $centros = Centro::all();
-    $centroSeleccionado = $request->input('fk_centro');
-
     $torneos = Torneo::all();
-    // Filtrar retos según el centro seleccionado
-    $query = Reto::query();
-    $retos = Reto::with('multimedia')->get();
-    $retos = Reto::when($centroSeleccionado, function ($query) use ($centroSeleccionado) {
-        return $query->where('fk_centro', $centroSeleccionado);
-    })
-    ->with('multimedia') // Relación con multimedia
-    ->paginate(6);
+    $torneoSeleccionado = $request->input('fk_torneo');
+    
+    // Inicialmente, no se muestran centros hasta que se elija un torneo
+    $centros = collect();
+    $centroSeleccionado = null;
 
-    return view('web_solidaria/retos.index', compact('centros', 'retos', 'centroSeleccionado','torneos'));
+    // Si se selecciona un torneo, obtener los centros participantes en ese torneo
+    if ($torneoSeleccionado) {
+        $centros = Centro::whereHas('retos', function ($query) use ($torneoSeleccionado) {
+            $query->where('fk_torneo', $torneoSeleccionado);
+        })->get();
+
+        $centroSeleccionado = $request->input('fk_centro');
+    }
+
+    // Construcción de la consulta de retos
+    $query = Reto::query();
+
+    if ($torneoSeleccionado) {
+        $query->where('fk_torneo', $torneoSeleccionado);
+
+        if ($centroSeleccionado) {
+            $query->where('fk_centro', $centroSeleccionado);
+        }
+    }
+
+    $retos = $query->with('multimedia')->paginate(6);
+
+    return view('web_solidaria/retos.index', compact('torneos', 'centros', 'retos', 'torneoSeleccionado', 'centroSeleccionado'));
 }
+
 
 
     public function index()
