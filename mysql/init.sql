@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS liga_solidaria;
-CREATE DATABASE liga_solidaria;
-USE liga_solidaria;
+DROP DATABASE IF EXISTS ligasolidaria;
+CREATE DATABASE ligasolidaria;
+USE ligasolidaria;
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
 -- Host: localhost    Database: lsfpc
