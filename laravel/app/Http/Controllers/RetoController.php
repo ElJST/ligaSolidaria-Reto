@@ -101,8 +101,9 @@ class RetoController extends Controller
      */
     public function show($id)
     {
+        $centros = Centro::FindOrFail($id);
         $reto = Reto::with('multimedia')->findOrFail($id);
-        return view('web_solidaria/retos.show', compact('reto'));
+        return view('web_solidaria/retos.show', compact('reto','centros'));
     }
     
 
