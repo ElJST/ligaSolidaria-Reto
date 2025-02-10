@@ -10,7 +10,6 @@
 </head>
 <body>
 <div class="container-fluid">
-
     <div class="row">
         <!-- Barra de navegación -->
         <nav class="col-2 bg-light  vh-100 p-2">
@@ -28,9 +27,6 @@
         <div class="col-10">
             @yield('content')
         </div>
-
-
-
     </div>
 </div>
 </body>
