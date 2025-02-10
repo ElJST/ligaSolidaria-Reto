@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 @if ($imagen && $imagen->foto)
                 <img src="{{ url('storage/' . $imagen->foto) }}" class="card-img-top" alt="Imagen de {{ $reto->nombre }}">
                 @else
-                <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Imagen por defecto">
+                <img src="{{ asset('images/defaultretos.png') }}" class="card-img-top" alt="Imagen por defecto">
                 @endif
             
                 <div class="card-body">
