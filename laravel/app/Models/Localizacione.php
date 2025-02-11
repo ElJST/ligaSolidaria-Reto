@@ -10,21 +10,21 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
  
 /**
- * Class Sede
+ * Class Localizacione
  *
- * @property int $id_sede
+ * @property int $id_localizacion
  * @property string $nombre
  * @property string $direccion
  * @property string|null $anotaciones
  *
- * @property Collection|Centro[] $centros
+ * @property Collection|Torneo[] $torneos
  *
  * @package App\Models
  */
-class Sede extends Model
+class Localizacione extends Model
 {
-    protected $table = 'sedes';
-    protected $primaryKey = 'id_sede';
+    protected $table = 'localizaciones';
+    protected $primaryKey = 'id_localizacion';
     public $timestamps = false;
  
     protected $fillable = [
@@ -33,8 +33,8 @@ class Sede extends Model
         'anotaciones'
     ];
  
-    public function centros()
+    public function torneos()
     {
-        return $this->hasMany(Centro::class, 'fk_sede');
+        return $this->hasMany(Torneo::class, 'fk_localizacion');
     }
 }

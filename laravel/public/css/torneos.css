@@ -1,0 +1,222 @@
+#fondo_torneos {
+    padding: 2rem;
+    background-color: #f8f9fa;
+}
+ 
+#titulo_torneo {
+    padding-bottom: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+ 
+.tarjeta_torneo {
+    width: 30rem;
+    cursor: pointer;
+    border: 0.063rem solid #ddd;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+ 
+.tarjeta_torneo:hover {
+    transform: scale(1.02);
+}
+ 
+#select_torneo {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+ 
+.boton-torneo {
+    margin-left: 1rem;
+}
+ 
+#select_torneo select {
+    padding: 0.5rem;
+    border-radius: 0.313rem;
+    border: 0.063rem solid #ccc;
+    width: 50%;
+    max-width: 17rem;
+}
+ 
+.card-header {
+    border-bottom: 0.063rem solid #ddd;
+    background-color: #6c757d;
+    color: white;
+    font-weight: bold;
+}
+ 
+.card-img-top {
+    max-height: 12.5rem;
+    object-fit: cover;
+    border-radius: 0%;
+}
+ 
+#info_torneo p {
+    margin-bottom: 0.5rem;
+}
+ 
+#placeholder_res{
+    font-size: smaller;
+    text-align: center;
+    font-weight: bold;
+    background-color: rgb(228, 228, 228);
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+}
+ 
+#cont-tarjetas {
+    padding: 2rem;
+    align-content: start;
+    font-size: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    align-items: flex-start;
+ 
+#cont_marcador {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+}
+ 
+#sec_marcador {
+    text-align: center;
+}
+ 
+#filtro_centros {
+    padding-bottom: 1rem;
+}
+ 
+#pag-item {
+    padding-top: 2rem;
+}
+ 
+#pag-item li a {
+    color: black;
+}
+ 
+.marcador-input {
+   width: 25%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: none;
+}
+ 
+#botones_torneo{
+    width: 50%;
+    font-size: 0.8rem;
+}
+ 
+.enlaces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+ 
+.enlaces a {
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.313rem;
+}
+ 
+.titulo-listado {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+ 
+/* Responsive */
+@media (max-width: 1024px) {
+    #botones_torneo {
+        width: 75%;
+    }
+ 
+    #select_torneo select {
+        width: 70%;
+    }
+}
+ 
+@media (max-width: 768px) {
+    .row.d-flex.align-items-center {
+        flex-direction: column;
+        text-align: center;
+    }
+ 
+    .col-lg-6 {
+        width: 100%;
+    }
+ 
+    .d-flex.align-items-end {
+        align-items: center !important;
+    }
+ 
+    #sec_marcador {
+        flex-direction: column;
+    }
+ 
+    #cont_marcador {
+        width: 100%;
+        text-align: center;
+    }
+ 
+    #ult_marcador {
+        width: 100%;
+    }
+ 
+    .dropdown-center {
+        display: flex;
+        justify-content: center;
+    }
+ 
+    #select_torneo select {
+        width: 90%;
+    }
+ 
+    .boton-torneo {
+        margin-top: 0.5rem;
+    }
+ 
+    #cont_marcador {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+ 
+@media (max-width: 576px) {
+    #titulo_torneos {
+        font-size: 1.5rem;
+    }
+   
+    .tarjeta_torneo {
+        max-width: 100%;
+    }
+   
+    .pagination {
+        justify-content: center !important;
+    }
+   
+    #sec_marcador {
+        width: 100%;
+    }
+ 
+    .pagination {
+        justify-content: center !important;
+    }
+ 
+    .btn {
+        width: 100%;
+        margin-bottom: 0.313rem;
+    }
+ 
+    #botones_torneo {
+        width: 100%;
+    }
+}
+ 
+}
