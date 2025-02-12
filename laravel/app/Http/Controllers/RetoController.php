@@ -137,14 +137,14 @@ class RetoController extends Controller
     {
         $request->validate([
             'nombre' => 'required|max:255',
- 
         ]);
  
        
         $retos= Reto::findOrFail($id);
         $retos->update($request->all());
  
-        return redirect()->route('retos.index')->with('success', 'Reto modificado exitosamente');
+        return redirect()->route('formulario.multimedia', ['foreignkey' => $retos])->with('success', 'Reto modificado exitosamente');
+
     }
  
     /**
