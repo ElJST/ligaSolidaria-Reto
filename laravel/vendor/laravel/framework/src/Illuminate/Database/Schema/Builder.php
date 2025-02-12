@@ -160,15 +160,15 @@ class Builder
      */
     public function hasTable($table)
     {
-        $table = $this->connection->getTablePrefix().$table;
+        // $table = $this->connection->getTablePrefix().$table;
 
-        foreach ($this->getTables(false) as $value) {
-            if (strtolower($table) === strtolower($value['name'])) {
-                return true;
-            }
-        }
+        // foreach ($this->getTables(false) as $value) {
+        //     if (strtolower($table) === strtolower($value['name'])) {
+        //         return true;
+        //     }
+        // }
 
-        return false;
+        // return false;
     }
 
     /**

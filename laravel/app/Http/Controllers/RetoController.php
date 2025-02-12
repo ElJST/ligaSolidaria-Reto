@@ -59,7 +59,7 @@ class RetoController extends Controller
         return $reto;
     });
  
-    return view('admin/retos.index', compact('retos'));
+    return view('admin.retos.index', compact('retos'));
 }
  
  
