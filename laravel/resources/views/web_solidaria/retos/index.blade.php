@@ -87,15 +87,12 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="col">
             <div class="card h-100 shadow ">
                  <!-- Cargar imagen del reto -->
-                 @php
-                 $imagen = $reto->multimedia()->first();
-                @endphp
+                
+                 <img src="{{ asset('images/defaultretos.png') }}" class="card-img-top" alt="Imagen por defecto">
 
-                @if ($imagen && $imagen->foto)
-                <img src="{{ url('storage/' . $imagen->foto) }}" class="card-img-top" alt="Imagen de {{ $reto->nombre }}">
-                @else
-                <img src="{{ asset('images/defaultretos.png') }}" class="card-img-top" alt="Imagen por defecto">
-                @endif
+                
+                
+                
             
                 <div class="card-body">
                 <a href="{{ route('retos.show', $reto->id_reto) }}" target="_blank">

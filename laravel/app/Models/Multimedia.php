@@ -51,6 +51,6 @@ class Multimedia extends Model
  
     public function reto()
     {
-        return $this->belongsTo(Reto::class, 'fk_reto');
+        return $this->belongsTo(Reto::class, 'fk_reto', 'id_reto');
     }
 }

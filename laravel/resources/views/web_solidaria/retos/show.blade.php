@@ -78,12 +78,11 @@
     <main class="container mt-4 mb-4">
         <div class="row">
             <div class="col-md-12 col-lg-6 alto d-flex justify-content-center align-items-center">
-                @if ($reto->multimedia && $reto->multimedia->first() && $reto->multimedia->first()->foto)
-                    <img src="{{ url('storage/' . $reto->multimedia->first()->foto) }}" class="img-fluid" alt="Imagen de {{ $reto->nombre }}">
-                @else
-                    {{-- <img src="{{ asset('images/default.jpg') }}" class="img-fluid" alt="Imagen por defecto"> --}}
-                    <img src="{{ asset('images/fto_prueba.png') }}" alt="fto_prueba" class="img-fluid">
-                @endif
+            @if ($reto->multimedia && $reto->multimedia->foto)
+                <img src="data:image/jpeg;base64,{{ $reto->multimedia->foto }}" class="img-fluid" alt="Imagen de {{ $reto->nombre }}">
+            @else
+                <img src="{{ asset('images/fto_prueba.png') }}" alt="fto_prueba" class="img-fluid">
+            @endif
 
                 
             </div>
