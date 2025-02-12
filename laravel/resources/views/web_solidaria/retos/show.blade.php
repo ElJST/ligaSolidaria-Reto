@@ -84,6 +84,7 @@
                 <img src="{{ asset('images/fto_prueba.png') }}" alt="fto_prueba" class="img-fluid">
             @endif
 
+
                 
             </div>
             <div class="col-md-12 col-lg-6 mt-md-4 mt-sm-4">
