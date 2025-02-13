@@ -50,6 +50,12 @@
         .navbar-toggler-icon {
             background-color: var(--main-bg-text-color);
         }
+        .carousel-item img {
+            position: relative;
+            width: 100%;
+            height: 400px; 
+            overflow: hidden; 
+        }
     </style>
 </head>
 <body>
@@ -108,10 +114,10 @@
         </div>
 
         <!-- Columna de los datos alineados a la derecha -->
-        <div class="col-md-6 d-flex flex-column justify-content-center align-items-start">
-            <p class="text-end w-100"><strong>{{$centros->nombre}}</strong></p>
-            <p class="text-end w-100"><strong>Estudios:</strong> {{ $reto->estudios }}</p>
-            <p class="text-end w-100"><strong>Descripción:</strong> {{ $reto->descripcion }}</p>
+        <div class="col-md-6 d-flex flex-column pt-4">
+            <p class="text-center w-100"><strong>{{$centros->nombre}}</strong></p>
+            <p class="text-start w-100"><strong>Estudios:</strong> {{ $reto->estudios }}</p>
+            <p class="text-start w-100"><strong>Descripción:</strong> {{ $reto->descripcion }}</p>
         </div>
     </div>
 </main>
