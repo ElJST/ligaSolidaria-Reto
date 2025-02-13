@@ -50,6 +50,7 @@ class RetoController extends Controller
  
     public function index()
 {
+
     $userCentro = 'Administrador'; // Obtener el valor de la variable de sesión
     $retos = Reto::with('centro', 'torneo')->paginate(3); // Cambiar 'get()' por 'paginate()'
    
