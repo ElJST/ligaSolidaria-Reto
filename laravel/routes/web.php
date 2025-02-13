@@ -49,11 +49,11 @@ Route::resource('centros', CentroController::class);
 Route::get('/torneos/{id}', [TorneoController::class, 'mostrarTorneo'])->name('torneos.mostrar');
  
 //-------------------michael rutas-----------------------
-Route::resource('admin', AdminController::class);
+// Route::resource('admin', AdminController::class);
  
-Route::resource('sede', Sede_Controller::class);
+// Route::resource('sede', Sede_Controller::class);
  
-Route::resource('centro', Centro_Controller::class);
+// Route::resource('centro', Centro_Controller::class);
  
 //-------------------------------------------------------
  

@@ -91,6 +91,11 @@
         </select>
     </div>
 
+    <!-- Botón para añadir imagen -->
+    <div class="form-group my-3">
+        <a href="{{ route('formulario.multimedia', ['foreignkey' => $retos->id_reto]) }}" class="btn btn-secondary">Añadir Imagen</a>
+    </div>    
+
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </div>
