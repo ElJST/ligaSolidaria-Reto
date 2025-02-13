@@ -76,26 +76,46 @@
     </section>
     
     <main class="container mt-4 mb-4">
-        <div class="row">
-            <div class="col-md-12 col-lg-6 alto d-flex justify-content-center align-items-center">
-                @if ($reto->multimedia && $reto->multimedia->foto)
-                    <img src="data:image/jpeg;base64,{{ $reto->multimedia->foto }}" class="img-fluid" alt="Imagen de {{ $reto->nombre }}">
-                @else
-                    <img src="{{ asset('images/fto_prueba.png') }}" alt="fto_prueba" class="img-fluid">
-                @endif
-            </div>
-            <div class="col-md-12 col-lg-6 mt-md-4 mt-sm-4">
-                <div class="d-flex justify-content-center">
-                    <p><strong>{{$centros->nombre}}</strong></p>
+    <div class="row">
+        <!-- Columna de la imagen -->
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            @if ($reto->multimedia->isNotEmpty())
+                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        @foreach ($reto->multimedia as $index => $media)
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}" aria-current="{{ $index == 0 ? 'true' : 'false' }}" aria-label="Slide {{ $index + 1 }}"></button>
+                        @endforeach
+                    </div>
+                    <div class="carousel-inner">
+                        @foreach ($reto->multimedia as $index => $media)
+                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                <img src="data:image/jpeg;base64,{{ $media->foto }}" class="d-block w-100 rounded" alt="Imagen de {{ $reto->nombre }}">
+                            </div>
+                        @endforeach
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
                 </div>
-                <div>
-                    <p><strong>Estudios:</strong> {{ $reto->estudios }}</p>
-                    <p><strong>Descripción:</strong> {{ $reto->descripcion }}</p>
-                </div>
-                
-            </div>
+            @else
+                <img src="{{ asset('images/fto_prueba.png') }}" alt="fto_prueba" class="img-fluid">
+            @endif
         </div>
-    </main>
+
+        <!-- Columna de los datos alineados a la derecha -->
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-start">
+            <p class="text-end w-100"><strong>{{$centros->nombre}}</strong></p>
+            <p class="text-end w-100"><strong>Estudios:</strong> {{ $reto->estudios }}</p>
+            <p class="text-end w-100"><strong>Descripción:</strong> {{ $reto->descripcion }}</p>
+        </div>
+    </div>
+</main>
+
     <section class="container d-flex justify-content-end mb-4">
         <a href="{{ route('retos.indexsololectura') }}" class="btn btn-primary">Volver</a>
     </section>

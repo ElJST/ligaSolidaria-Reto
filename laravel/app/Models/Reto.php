@@ -27,8 +27,9 @@ class Reto extends Model
     }
 
     public function multimedia()
-    {
-        return $this->hasOne(Multimedia::class, 'fk_reto','id_reto');
-    }
+{
+    return $this->hasMany(Multimedia::class, 'fk_reto', 'id_reto');
+}
+
     
 }

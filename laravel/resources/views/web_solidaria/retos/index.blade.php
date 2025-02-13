@@ -88,19 +88,16 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="card h-100 shadow ">
                  <!-- Cargar imagen del reto -->
                 
-                 <img src="{{ asset('images/defaultretos.png') }}" class="card-img-top" alt="Imagen por defecto">
+                 <img src="{{ asset('images/imagendefecto.png') }}" class="card-img-top" alt="Imagen por defecto">
 
                 
                 
                 
             
                 <div class="card-body">
-                <a href="{{ route('retos.show', $reto->id_reto) }}" target="_blank">
-    <h5 class="card-title">{{ $reto->nombre }}</h5>
-</a>
-
-
-
+                <a href="{{ route('retos.show', $reto->id_reto) }}" target="_blank" class="retos">
+                    <h5 class="card-title ">{{ $reto->nombre }}</h5>
+                </a>
                 </div>
             </div>
         </div>

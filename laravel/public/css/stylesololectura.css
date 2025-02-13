@@ -19,6 +19,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--main-title-color);
+ 
 }
 
 .container {
@@ -82,9 +83,15 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 0 0 10px 10px;
 }
 
+.retos{
+  text-decoration: none;
+  color: var(--main-bg-color);
+}
+
 .card-title {
   color: var(--main-title-color);
   font-weight: bold;
+  text-align: center;
 }
 
 .card-text {

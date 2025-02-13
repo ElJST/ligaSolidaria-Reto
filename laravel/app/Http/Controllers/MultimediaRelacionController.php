@@ -55,10 +55,8 @@ class MultimediaRelacionController extends Controller
         $multimedia->{$column} = $fk;
         $multimedia->save();
  
-        return response()->json([
-            'mensaje' => 'Datos insertados correctamente',
-            'id_creado' => $multimedia->id_media
-        ]);
+        return redirect()->back()->with('success', 'Multimedia subida correctamente. ID: ' . $multimedia->id_media);
+ 
     }
 }
 ?>

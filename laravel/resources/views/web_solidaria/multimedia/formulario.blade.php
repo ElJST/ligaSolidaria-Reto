@@ -5,7 +5,17 @@
 @section('content')
  
     <h1>Subir Multimedia</h1>
-   
+    @if(session('success'))
+            <div class="alert alert-success mt-3">
+                {{ session('success') }}
+            </div>
+        @endif
+ 
+        @if(session('error'))
+            <div class="alert alert-danger mt-3">
+                {{ session('error') }}
+            </div>
+        @endif
     <!-- Formulario para subir multimedia -->
     <form method="POST" action="{{ route('relaciones.guardarMultimedia') }}" id="form-subir-imagen">
         @csrf  <!-- Protección CSRF -->
@@ -39,6 +49,9 @@
         </div>
  
         <button type="submit" class="btn btn-primary">Subir Multimedia</button>
+        <div class="form-group my-3">
+            <a href="{{ route('retos.index')}}" class="btn btn-secondary">Volver</a>
+       </div>
     </form>
 @endsection
 @push('scripts')

@@ -112,8 +112,10 @@ class RetoController extends Controller
         $reto = Reto::with('multimedia')->findOrFail($id);
         $centros = Centro::where('id_centro', $reto->fk_centro)->first();
         
-        return view('web_solidaria/retos.show', compact('reto','centros'));
+        return view('web_solidaria/retos.show', compact('reto', 'centros'));
     }
+    
+
    
  
     /**
