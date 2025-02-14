@@ -85,21 +85,17 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-4">
         @foreach ($retos as $reto)
         <div class="col">
-            <div class="card h-100 shadow ">
-                 <!-- Cargar imagen del reto -->
-                
-                 <img src="{{ asset('images/imagendefecto.png') }}" class="card-img-top" alt="Imagen por defecto">
+            <a href="{{ route('retos.show', $reto->id_reto) }}" class="retos">
 
-                
-                
-                
-            
+            <div class="card h-100 shadow ">
+                <!-- Cargar imagen del reto -->
+                <img src="{{ asset('images/imagendefecto.png') }}" class="card-img-top pt-4" alt="Imagen por defecto">
                 <div class="card-body">
-                <a href="{{ route('retos.show', $reto->id_reto) }}" target="_blank" class="retos">
-                    <h5 class="card-title ">{{ $reto->nombre }}</h5>
-                </a>
+                        <h5 class="card-title ">{{ $reto->nombre }}</h5>
+                    
                 </div>
             </div>
+        </a>
         </div>
         @endforeach
     </div>
