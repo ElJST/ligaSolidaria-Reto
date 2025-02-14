@@ -10,7 +10,7 @@
 <body>
 <div class="container-fluid">
     <div class="row">
-        <!-- Barra de navegación -->
+    <!-- Barra de navegación -->
     <nav id="mainNavbar" class="navbar navbar-expand-lg navbar navbar-hidden sticky-top">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
@@ -19,11 +19,13 @@
             </button>
             <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
                 <div class="navbar-nav nav-underline">
-                    <a class="nav-link" aria-current="page" href="#">Equipos</a>
-                    <a class="nav-link" aria-current="page" href="#carouselExampleCaptions">Participantes</a>
-                    <a class="nav-link" href="#ODS">Publicaciones</a>
-                    <a class="nav-link" href="#patrocinadores">Sedes</a>
-                    <a class="nav-link" href="normativa/normativa.html">Centros</a>
+                     <a class="nav-link" aria-current="page" href="#">Inicio</a>{{-- {{ route('inicio.index') }} --}}
+                    <a class="nav-link" href="{{ route('retos.indexsololectura') }}">Retos</a>
+                    <a class="nav-link" href="#">Torneo Solidario</a>
+                     <a class="nav-link" href="#">Torneo Deportivo</a> {{-- {{ route('torneo.deportivo') }} --}}
+                    <a class="nav-link" href="#">Congreso</a>
+                    <a class="nav-link" href="#">Organización</a>
+                    <a class="nav-link" href="#">Innovación Educativa</a>
                 </div>
             </div>
         </div>
